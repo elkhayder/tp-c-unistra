@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "lzw.h": "c",
+        "ctype.h": "c"
+    }
+}
