@@ -4,9 +4,41 @@
 #include "synth.h"
 #include "save.h"
 #include "midi.h"
+#include "track.h"
+#include "instrument.h"
 
 #include <math.h>
 
+int main(int argc, char **argv)
+{
+    Signal output;
+    signal_init(&output, SAMPLING_RATE, 0);
+
+    Track track;
+    track_init(&track);
+    parseMidiFile("Mario Bros. - Super Mario Bros. Theme.mid", &track);
+
+    Instrument ins;
+    instrument_init(&ins);
+    instrument_append_osc(&ins, Sine, 0.7);
+    instrument_append_osc(&ins, Square, 0.2);
+    instrument_append_osc(&ins, Sawtooth, 0.4);
+    instrument_set_envelope(&ins, 0.05, 1, 0.03, 0.15);
+
+    track_play(&track, &output, &ins);
+
+    csvSaveSignal(&output, "Mario.csv");
+    wavSaveSignal(&output, "Mario.wav");
+
+    track_log(&track);
+    track_free(&track);
+
+    signal_free(&output);
+
+    return EXIT_SUCCESS;
+}
+
+/*
 int main(int argc, char **argv)
 {
     Signal sine, adsr, exp, exp_adsr;
@@ -58,8 +90,8 @@ int main(int argc, char **argv)
     signal_free(&output);
     signal_free(&exp_adsr);
 
-    readMidiFile("Mario Bros. - Super Mario Bros. Theme.mid");
-    /* readMidiFile("Cymatics - August - 90 BPM A Min.mid"); */
+    parseMidiFile("Mario Bros. - Super Mario Bros. Theme.mid");
+    parseMidiFile("Cymatics - August - 90 BPM A Min.mid");
 
     return EXIT_SUCCESS;
-}
+} */

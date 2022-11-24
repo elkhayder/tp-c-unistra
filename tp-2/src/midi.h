@@ -1,12 +1,12 @@
 #ifndef _MIDI_H
 #define _MIDI_H
 
-typedef struct Note
-{
-    double on_time;
-    double off_time;
-    unsigned char number;
-} Note;
+#include <math.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdbool.h>
+
+#include "track.h"
 
 typedef enum EventName
 {
@@ -39,5 +39,7 @@ typedef enum MetaEventName
     MetaKeySignature = 0x59,
     MetaSequencerSpecific = 0x7F,
 } MetaEventName;
+
+void parseMidiFile(const char *filename, Track *track);
 
 #endif

@@ -1,7 +1,4 @@
 #include "midi.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdbool.h>
 
 /**
 
@@ -82,10 +79,16 @@ char *readString(FILE *file, unsigned int length)
     return string;
 }
 
-void readMidiFile(const char *filename)
+/**
+ * Ignore the annoying warning
+ * https://stackoverflow.com/a/3394268/11755388
+ */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-variable"
+void parseMidiFile(const char *filename, Track *track)
 {
     FILE *file = fopen(filename, "rb");
-    FILE *log = fopen("log.txt", "w");
+    FILE *log = fopen("midi.log", "w");
 
     char *fileID = readString(file, 4);
     __uint32_t headerLength = read32(file);
@@ -108,7 +111,7 @@ void readMidiFile(const char *filename)
         bool isEndOfTrack = false;
 
         __uint8_t prevStatus = 0;
-        __uint64_t wallTime = 0;
+        __uint32_t wallTime = 0;
 
         while (!feof(file) && !isEndOfTrack)
         {
@@ -117,6 +120,8 @@ void readMidiFile(const char *filename)
             fprintf(log, "Cursor Pos: 0x%02X\n", pos);
             __uint32_t deltaTime = readValue(file);
             __uint8_t status = fgetc(file);
+
+            wallTime += deltaTime;
 
             if (status < 0x80)
             {
@@ -131,6 +136,7 @@ void readMidiFile(const char *filename)
                 __uint8_t nNoteID = fgetc(file);
                 __uint8_t nNoteVelocity = fgetc(file);
                 fprintf(log, "Note OFF - ID: %u, Velocity: %u, Δt: %u\n", nNoteID, nNoteVelocity, deltaTime);
+                track_note_off(track, nNoteID, wallTime);
             }
             else if ((status & 0xF0) == VoiceNoteOn)
             {
@@ -140,11 +146,13 @@ void readMidiFile(const char *filename)
                 __uint8_t nNoteVelocity = fgetc(file);
                 if (nNoteVelocity == 0)
                 {
-                    fprintf(log, "Note OFF/ON - ID: %u, Velocity: %u, Δt: %u\n", nNoteID, nNoteVelocity, deltaTime);
+                    fprintf(log, "Note OFF - ID: %u, Velocity: %u, Δt: %u\n", nNoteID, nNoteVelocity, deltaTime);
+                    track_note_off(track, nNoteID, wallTime);
                 }
                 else
                 {
                     fprintf(log, "Note ON - ID: %u, Velocity: %u, Δt: %u\n", nNoteID, nNoteVelocity, deltaTime);
+                    track_note_on(track, nNoteID, wallTime);
                 }
             }
             else if ((status & 0xF0) == VoiceAftertouch)
@@ -291,4 +299,17 @@ void readMidiFile(const char *filename)
     }
     fclose(file);
     fclose(log);
+
+    /**
+     * Substract the initiall Delta times where the header files were transmitted
+     * First note in Track notes list should be the origin of t axis
+     */
+    int i;
+    __uint32_t offset = track->notes[0].on_tick;
+    for (i = 0; i < track->notes_count; i++)
+    {
+        track->notes[i].on_tick -= offset;
+        track->notes[i].off_tick -= offset;
+    }
 }
+#pragma GCC diagnostic pop

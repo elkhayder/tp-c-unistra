@@ -16,9 +16,9 @@ typedef struct Signal
 /**
  * Init common signal params
  */
-int initSignal(Signal *signal,
-               unsigned int sampling_rate,
-               double duration);
+int signal_init(Signal *signal,
+                unsigned int sampling_rate,
+                double duration);
 
 /**
  * Sine

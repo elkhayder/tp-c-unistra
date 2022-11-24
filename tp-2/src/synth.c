@@ -11,9 +11,9 @@
 /**
  * Common signal props
  */
-int initSignal(Signal *signal,
-               unsigned int sampling_rate,
-               double duration)
+int signal_init(Signal *signal,
+                unsigned int sampling_rate,
+                double duration)
 {
     signal->sampling_rate = sampling_rate;
     signal->samples_count = (unsigned int)ceil(sampling_rate * duration);
@@ -38,7 +38,7 @@ int setSineSignal(
     double frequency,
     double phase)
 {
-    if (initSignal(signal, sampling_rate, duration) == SYNTH_FAILURE)
+    if (signal_init(signal, sampling_rate, duration) == SYNTH_FAILURE)
     {
         return SYNTH_FAILURE;
     }
@@ -61,7 +61,7 @@ int setExpSignal(Signal *signal,
                  unsigned int sampling_rate,
                  double tau)
 {
-    if (initSignal(signal, sampling_rate, 15 * log(2) * tau) == SYNTH_FAILURE)
+    if (signal_init(signal, sampling_rate, 15 * log(2) * tau) == SYNTH_FAILURE)
     {
         return SYNTH_FAILURE;
     }
@@ -88,7 +88,7 @@ int setADSRSignal(Signal *signal,
                   double sustain_duration,
                   double release_duration)
 {
-    if (initSignal(signal, sampling_rate, attack_duration + decay_duration + sustain_duration + release_duration) == SYNTH_FAILURE)
+    if (signal_init(signal, sampling_rate, attack_duration + decay_duration + sustain_duration + release_duration) == SYNTH_FAILURE)
     {
         return SYNTH_FAILURE;
     }
@@ -177,7 +177,7 @@ int signal_multiply(Signal *destination, Signal *s1, Signal *s2)
      */
     int samples = MIN(s1->samples_count, s2->samples_count);
 
-    if (initSignal(destination, s1->sampling_rate, (double)samples / (double)s1->sampling_rate) == SYNTH_FAILURE)
+    if (signal_init(destination, s1->sampling_rate, (double)samples / (double)s1->sampling_rate) == SYNTH_FAILURE)
     {
         return SYNTH_FAILURE;
     }
@@ -204,7 +204,7 @@ int signal_sum(Signal *destination, Signal *s1, Signal *s2)
 
     int samples = MIN(s1->samples_count, s2->samples_count);
 
-    if (initSignal(destination, s1->sampling_rate, (double)samples / (double)s1->sampling_rate) == SYNTH_FAILURE)
+    if (signal_init(destination, s1->sampling_rate, (double)samples / (double)s1->sampling_rate) == SYNTH_FAILURE)
     {
         return SYNTH_FAILURE;
     }
