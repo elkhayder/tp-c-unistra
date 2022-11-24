@@ -4,15 +4,13 @@
 #define SYNTH_SUCCESS -1
 #define SYNTH_FAILURE 0
 
-#define DATA_TYPE double
-
 #define ERR_MEM_ALLOC "Error allocating %ld bytes\n"
 
 typedef struct Signal
 {
     unsigned int sampling_rate;
     unsigned int samples_count;
-    DATA_TYPE *data;
+    double *data;
 } Signal;
 
 /**
@@ -58,10 +56,12 @@ void signal_free(Signal *signal);
 /**
  * Signals manipulation
  */
-void signal_amplify(Signal *signal, double coef);
+void signal_amplify(Signal *signal, double gain);
 
-int signal_multiply(Signal *output, Signal *s1, Signal *s2);
+int signal_multiply(Signal *destination, Signal *s1, Signal *s2);
 
-int signal_sum(Signal *output, Signal *s1, Signal *s2);
+int signal_sum(Signal *destination, Signal *s1, Signal *s2);
+
+int signal_concatinate(Signal *destination, Signal *input, double t);
 
 #endif

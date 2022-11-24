@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#define MAX(a, b) (((a) > (b)) ? (a) : (b))
 
 int csvSaveSignal(Signal *signal, const char *filename)
 {
@@ -77,9 +78,16 @@ int wavSaveSignal(Signal *signal, const char *filename)
     fwrite(buffer, 4, 1, file);
 
     int i;
+    double maxValue = 0;
+
     for (i = 0; i < signal->samples_count; i++)
     {
-        buffer[0] = (__int16_t)signal->data[i];
+        maxValue = MAX(abs(signal->data[i]), maxValue);
+    }
+
+    for (i = 0; i < signal->samples_count; i++)
+    {
+        buffer[0] = (__int16_t)(signal->data[i] / maxValue * 32768);
         fwrite(buffer, 2, 1, file);
     }
 

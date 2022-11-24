@@ -5,6 +5,9 @@
 #define __USE_MISC
 #include <math.h>
 
+#define MAX(a, b) (((a) > (b)) ? (a) : (b))
+#define MIN(a, b) (((a) > (b)) ? (b) : (a))
+
 /**
  * Common signal props
  */
@@ -14,11 +17,11 @@ int initSignal(Signal *signal,
 {
     signal->sampling_rate = sampling_rate;
     signal->samples_count = (unsigned int)ceil(sampling_rate * duration);
-    signal->data = malloc(signal->samples_count * sizeof(DATA_TYPE));
+    signal->data = malloc(signal->samples_count * sizeof(double));
 
     if (signal->data == NULL)
     {
-        fprintf(stderr, ERR_MEM_ALLOC, signal->samples_count * sizeof(DATA_TYPE));
+        fprintf(stderr, ERR_MEM_ALLOC, signal->samples_count * sizeof(double));
         return SYNTH_FAILURE;
     }
 
@@ -149,25 +152,32 @@ void signal_free(Signal *signal)
 /**
  * Signals manipulation
  */
-void signal_amplify(Signal *signal, double coef)
+void signal_amplify(Signal *signal, double gain)
 {
     int i;
     for (i = 0; i < signal->samples_count; i++)
     {
-        signal->data[i] *= coef;
+        signal->data[i] *= gain;
     }
 }
 
-int signal_multiply(Signal *output, Signal *s1, Signal *s2)
+int signal_multiply(Signal *destination, Signal *s1, Signal *s2)
 {
+    /**
+     * Fail if the two signals are sampled with different frequencies
+     * TODO: Implement a resampling functionnality
+     */
     if (s1->sampling_rate != s2->sampling_rate)
     {
         return SYNTH_FAILURE;
     }
 
-    int samples = s1->samples_count >= s2->samples_count ? s2->samples_count : s1->samples_count;
+    /**
+     * Choose the shorter signal
+     */
+    int samples = MIN(s1->samples_count, s2->samples_count);
 
-    if (initSignal(output, s1->sampling_rate, (double)samples / (double)s1->sampling_rate) == SYNTH_FAILURE)
+    if (initSignal(destination, s1->sampling_rate, (double)samples / (double)s1->sampling_rate) == SYNTH_FAILURE)
     {
         return SYNTH_FAILURE;
     }
@@ -175,22 +185,26 @@ int signal_multiply(Signal *output, Signal *s1, Signal *s2)
     int i;
     for (i = 0; i < samples; i++)
     {
-        output->data[i] = s1->data[i] * s2->data[i];
+        destination->data[i] = s1->data[i] * s2->data[i];
     }
 
     return SYNTH_SUCCESS;
 }
 
-int signal_sum(Signal *output, Signal *s1, Signal *s2)
+int signal_sum(Signal *destination, Signal *s1, Signal *s2)
 {
+    /**
+     * Fail if the two signals are sampled with different frequencies
+     * TODO: Implement a resampling functionnality
+     */
     if (s1->sampling_rate != s2->sampling_rate)
     {
         return SYNTH_FAILURE;
     }
 
-    int samples = s1->samples_count >= s2->samples_count ? s2->samples_count : s1->samples_count;
+    int samples = MIN(s1->samples_count, s2->samples_count);
 
-    if (initSignal(output, s1->sampling_rate, (double)samples / (double)s1->sampling_rate) == SYNTH_FAILURE)
+    if (initSignal(destination, s1->sampling_rate, (double)samples / (double)s1->sampling_rate) == SYNTH_FAILURE)
     {
         return SYNTH_FAILURE;
     }
@@ -199,7 +213,42 @@ int signal_sum(Signal *output, Signal *s1, Signal *s2)
 
     for (i = 0; i < samples; i++)
     {
-        output->data[i] = s1->data[i] + s2->data[i];
+        destination->data[i] = s1->data[i] + s2->data[i];
+    }
+
+    return SYNTH_SUCCESS;
+}
+
+int signal_concatinate(Signal *destination, Signal *input, double t)
+{
+    /**
+     * Fail if the two signals are sampled with different frequencies
+     * TODO: Implement a resampling functionnality
+     */
+    if (destination->sampling_rate != input->sampling_rate)
+    {
+        return SYNTH_FAILURE;
+    }
+
+    int index = t * destination->sampling_rate;
+
+    int samples_count = MAX(destination->samples_count, index + input->samples_count);
+
+    int i;
+    /**
+     * Reduce volume by 20%
+     */
+    /*for (i = 0; i < destination->samples_count; i++)
+    {
+        destination->data[i] *= 0.8;
+    } */
+
+    destination->samples_count = samples_count;
+    destination->data = (double *)realloc(destination->data, samples_count * sizeof(double));
+
+    for (i = 0; i < input->samples_count; i++)
+    {
+        destination->data[i + index] += input->data[i];
     }
 
     return SYNTH_SUCCESS;
