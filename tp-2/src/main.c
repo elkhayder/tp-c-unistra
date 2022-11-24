@@ -27,7 +27,6 @@ int main(int argc, char **argv)
 
     track_play(&track, &output, &ins);
 
-    csvSaveSignal(&output, "Mario.csv");
     wavSaveSignal(&output, "Mario.wav");
 
     track_log(&track);
