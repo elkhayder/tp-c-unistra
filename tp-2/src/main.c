@@ -8,6 +8,7 @@
 #include "structs/Signal.h"
 #include "structs/Instrument.h"
 #include "structs/Track.h"
+#include "structs/BiquadFilter.h"
 
 #include "io/Midi.h"
 #include "io/Export.h"
@@ -51,6 +52,10 @@ int main(int argc, char **argv)
     instrument_set_envelope(&ins, 0.05, 1.1, 0.02, 0.1);
 
     track_play(&track, &output, &ins);
+
+    BiquadFilter filter;
+    filter_init(&filter, LowPass, 1000, FRAC_1_SQRT_2, 0);
+    filter_apply(&filter, &output);
 
     export_wav(&output, wavFilename);
 

@@ -6,6 +6,12 @@
 #define SUCCESS -1
 #define FAILURE 0
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+#define FRAC_1_SQRT_2 0.707106781186547524400844362104849039
+
 /* Errors */
 
 #define ERR_PROG_SYNTAX "%s Midi_Filename [Output_Filename]\n"
@@ -26,5 +32,7 @@
 
 #define ERR_INSTRUMENT_INIT "Error initiating instrument\n"
 #define ERR_INSTRUMENT_APPEND_OSC "Error appending oscilaltor to instrument\n"
+
+#define ERR_APPLYING_FILTER "Error applying filter\n"
 
 #endif
