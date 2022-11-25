@@ -1,27 +1,45 @@
-octave: main.o synth.o save.o midi.o track.o instrument.o
-	gcc build/main.o build/synth.o build/save.o build/midi.o build/track.o build/instrument.o -o octave -lm
+octave: main.o ADSREnvelope.o Instrument.o Note.o Oscillator.o Signal.o Track.o Midi.o Export.o
+	gcc build/main.o build/ADSREnvelope.o build/Instrument.o build/Note.o build/Oscillator.o build/Signal.o build/Track.o build/Midi.o build/Export.o -o octave -lm
 
-main.o: src/main.c src/main.h
+main.o: src/main.c
 	gcc -ansi -Wall -c src/main.c -o build/main.o
 
-synth.o: src/synth.c src/synth.h
-	gcc -ansi -Wall -c src/synth.c -o build/synth.o
+# Structs
 
-save.o: src/save.c src/save.h
-	gcc -ansi -Wall -c src/save.c -o build/save.o
+ADSREnvelope.o: src/structs/ADSREnvelope.c src/structs/ADSREnvelope.h
+	gcc -ansi -Wall -c src/structs/ADSREnvelope.c -o build/ADSREnvelope.o
 
-midi.o: src/midi.c src/midi.h
-	gcc -ansi -Wall -c src/midi.c -o build/midi.o
+Instrument.o: src/structs/Instrument.c src/structs/Instrument.h
+	gcc -ansi -Wall -c src/structs/Instrument.c -o build/Instrument.o
 
-track.o: src/track.c src/track.h
-	gcc -ansi -Wall -c src/track.c -o build/track.o
+Note.o: src/structs/Note.c src/structs/Note.h
+	gcc -ansi -Wall -c src/structs/Note.c -o build/Note.o
 
-instrument.o: src/instrument.c src/instrument.h
-	gcc -ansi -Wall -c src/instrument.c -o build/instrument.o
+Oscillator.o: src/structs/Oscillator.c src/structs/Oscillator.h
+	gcc -ansi -Wall -c src/structs/Oscillator.c -o build/Oscillator.o
 
-clean:
+Signal.o: src/structs/Signal.c src/structs/Signal.h
+	gcc -ansi -Wall -c src/structs/Signal.c -o build/Signal.o
+
+Track.o: src/structs/Track.c src/structs/Track.h
+	gcc -ansi -Wall -c src/structs/Track.c -o build/Track.o
+
+# IO
+
+Midi.o: src/io/Midi.c src/io/Midi.h
+	gcc -ansi -Wall -c src/io/Midi.c -o build/Midi.o
+
+Export.o: src/io/Export.c src/io/Export.h
+	gcc -ansi -Wall -c src/io/Export.c -o build/Export.o
+
+# Routines
+
+clear:
 	rm build/*
 	rm octave
 
+clean:
+	rm *.wav *.log *.csv
+
 run: octave
-	./octave
+	./octave SingleNote

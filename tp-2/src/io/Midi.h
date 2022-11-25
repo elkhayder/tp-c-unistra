@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#include "track.h"
+#include "../structs/Track.h"
 
 typedef enum EventName
 {
@@ -40,6 +40,6 @@ typedef enum MetaEventName
     MetaSequencerSpecific = 0x7F,
 } MetaEventName;
 
-void parseMidiFile(const char *filename, Track *track);
+int midi_parse(const char *filename, Track *track);
 
 #endif

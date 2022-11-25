@@ -1,4 +1,4 @@
-#include "midi.h"
+#include "Midi.h"
 
 /**
 
@@ -85,7 +85,10 @@ char *readString(FILE *file, unsigned int length)
  */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-variable"
-void parseMidiFile(const char *filename, Track *track)
+/**
+ * TODO: Errors checking
+ */
+int midi_parse(const char *filename, Track *track)
 {
     FILE *file = fopen(filename, "rb");
     FILE *log = fopen("midi.log", "w");
@@ -94,9 +97,12 @@ void parseMidiFile(const char *filename, Track *track)
     __uint32_t headerLength = read32(file);
     __uint16_t format = read16(file);
     __uint16_t trackChunksCount = read16(file);
-    __uint16_t division = read16(file);
+
+    track->divisions = read16(file);
 
     __uint32_t tempo = 0;
+
+    fprintf(log, "Format: %u, Tracks Count: %u, Divisions: %u\n", format, trackChunksCount, track->divisions);
 
     int chunk;
     for (chunk = 0; chunk < trackChunksCount; chunk++)
@@ -115,9 +121,6 @@ void parseMidiFile(const char *filename, Track *track)
 
         while (!feof(file) && !isEndOfTrack)
         {
-            fpos_t pos;
-            fgetpos(file, &pos);
-            fprintf(log, "Cursor Pos: 0x%02X\n", pos);
             __uint32_t deltaTime = readValue(file);
             __uint8_t status = fgetc(file);
 
@@ -152,7 +155,7 @@ void parseMidiFile(const char *filename, Track *track)
                 else
                 {
                     fprintf(log, "Note ON - ID: %u, Velocity: %u, Δt: %u\n", nNoteID, nNoteVelocity, deltaTime);
-                    track_note_on(track, nNoteID, wallTime);
+                    track_note_on(track, nNoteID, wallTime, nNoteVelocity);
                 }
             }
             else if ((status & 0xF0) == VoiceAftertouch)
@@ -252,6 +255,7 @@ void parseMidiFile(const char *filename, Track *track)
                         }
                         __uint16_t BPM = (60000000 / tempo);
                         fprintf(log, "Tempo: %u, BPM: %u\n", tempo, BPM);
+                        track->BPM = BPM;
                         break;
                     case MetaSMPTEOffset:
                         fprintf(log, "SMPTE: H: %d, M: %u, S: %u, FR: %u, FF: %u, \n", fgetc(file), fgetc(file), fgetc(file), fgetc(file), fgetc(file));
@@ -311,5 +315,7 @@ void parseMidiFile(const char *filename, Track *track)
         track->notes[i].on_tick -= offset;
         track->notes[i].off_tick -= offset;
     }
+
+    return SUCCESS;
 }
 #pragma GCC diagnostic pop

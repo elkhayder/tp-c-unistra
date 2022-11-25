@@ -1,33 +1,58 @@
 #include <stdlib.h>
 
-#include "main.h"
-#include "synth.h"
-#include "save.h"
-#include "midi.h"
-#include "track.h"
-#include "instrument.h"
-
 #include <math.h>
+#include <string.h>
+
+#include "misc/Constants.h"
+
+#include "structs/Signal.h"
+#include "structs/Instrument.h"
+#include "structs/Track.h"
+
+#include "io/Midi.h"
+#include "io/Export.h"
 
 int main(int argc, char **argv)
 {
+    char midiFilename[1024];
+    char wavFilename[1024];
+
+    if (argc == 1)
+    {
+        fprintf(stderr, ERR_PROG_SYNTAX, argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    strcpy(midiFilename, argv[1]);
+    strcat(midiFilename, ".mid");
+
+    if (argc == 3)
+    {
+        strcpy(wavFilename, argv[2]);
+    }
+    else
+    {
+        strcpy(wavFilename, argv[1]);
+    }
+    strcat(wavFilename, ".wav");
+
     Signal output;
     signal_init(&output, SAMPLING_RATE, 0);
 
     Track track;
     track_init(&track);
-    parseMidiFile("Mario Bros. - Super Mario Bros. Theme.mid", &track);
+    midi_parse(midiFilename, &track);
 
     Instrument ins;
     instrument_init(&ins);
     instrument_append_osc(&ins, Sine, 0.7);
     instrument_append_osc(&ins, Square, 0.2);
     instrument_append_osc(&ins, Sawtooth, 0.4);
-    instrument_set_envelope(&ins, 0.05, 1, 0.03, 0.15);
+    instrument_set_envelope(&ins, 0.05, 1.1, 0.02, 0.1);
 
     track_play(&track, &output, &ins);
 
-    wavSaveSignal(&output, "Mario.wav");
+    export_wav(&output, wavFilename);
 
     track_log(&track);
     track_free(&track);

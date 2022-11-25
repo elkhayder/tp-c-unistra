@@ -1,20 +1,18 @@
-#include "save.h"
-#include "synth.h"
+#include "Export.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#define MAX(a, b) (((a) > (b)) ? (a) : (b))
 
-int csvSaveSignal(Signal *signal, const char *filename)
+int export_csv(Signal *signal, const char *filename)
 {
     FILE *file = fopen(filename, "w");
 
     if (!file)
     {
         fprintf(stderr, ERR_FILE_CREATE, filename);
-        return SAVE_FAILURE;
+        return FAILURE;
     }
 
     int i;
@@ -28,10 +26,10 @@ int csvSaveSignal(Signal *signal, const char *filename)
 
     fclose(file);
 
-    return SAVE_SUCCESS;
+    return SUCCESS;
 }
 
-int wavSaveSignal(Signal *signal, const char *filename)
+int export_wav(Signal *signal, const char *filename)
 {
     FILE *file = fopen(filename, "w");
 
@@ -42,7 +40,7 @@ int wavSaveSignal(Signal *signal, const char *filename)
     if (!file)
     {
         fprintf(stderr, ERR_FILE_CREATE, filename);
-        return SAVE_FAILURE;
+        return FAILURE;
     }
 
     fprintf(file, "RIFF");
@@ -87,9 +85,9 @@ int wavSaveSignal(Signal *signal, const char *filename)
 
     for (i = 0; i < signal->samples_count; i++)
     {
-        buffer[0] = (__int16_t)(signal->data[i] / maxValue * 32768);
+        buffer[0] = (__int16_t)((signal->data[i] / maxValue) * pow(2, 15) / 2);
         fwrite(buffer, 2, 1, file);
     }
 
-    return SAVE_SUCCESS;
+    return SUCCESS;
 }
