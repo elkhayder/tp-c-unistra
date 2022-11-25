@@ -59,6 +59,8 @@
         "signal.h": "c",
         "export.h": "c",
         "biquadfilter.h": "c",
-        "constants.h": "c"
+        "constants.h": "c",
+        "ins.h": "c",
+        "adsrenvelope.h": "c"
     }
 }

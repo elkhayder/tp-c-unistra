@@ -17,8 +17,6 @@ int filter_init(BiquadFilter *filter, BiquadFilterType type, double f0, double Q
     /* a: α */
     const double a = w0sin / (2.0 * Q);
 
-    printf("Q = %f, A = %f, w0 = %f, α = %f\n", Q, A, w0, a);
-
     switch (type)
     {
     case LowPass:
@@ -84,8 +82,6 @@ int filter_init(BiquadFilter *filter, BiquadFilterType type, double f0, double Q
     default:
         return FAILURE;
     }
-
-    printf("Coefs: %f %f %f %f %f %f\n", filter->b0, filter->b1, filter->b2, filter->a0, filter->a1, filter->a2);
 
     return SUCCESS;
 }

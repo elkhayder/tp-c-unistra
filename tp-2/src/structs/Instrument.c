@@ -5,15 +5,8 @@ int instrument_init(Instrument *instrument)
     instrument->oscs_count = 0;
     instrument->oscs_coefs = 0;
     instrument->oscs = malloc(0);
-    instrument->envelope = malloc(sizeof(ADSREnvelope));
-
-    if (instrument->envelope == NULL)
-    {
-        fprintf(stderr, ERR_MEM_ALLOC);
-        fprintf(stderr, ERR_INSTRUMENT_INIT);
-        return FAILURE;
-    }
-
+    instrument->envelope = NULL;
+    instrument->filter = NULL;
     return SUCCESS;
 }
 
@@ -50,11 +43,25 @@ int instrument_set_envelope(
     double decay_duration,
     double release_duration)
 {
-    ADSREnvelope *env = instrument->envelope;
-    env->attack_duration = attack_duration;
-    env->attack_amplitude = attack_amplitude;
-    env->decay_duration = decay_duration;
-    env->release_duration = release_duration;
+    /* Free previous Envelope if already set */
+    if (instrument->envelope != NULL)
+    {
+        free(instrument->envelope);
+    }
+
+    instrument->envelope = malloc(sizeof(ADSREnvelope));
+
+    if (instrument->envelope == NULL)
+    {
+        fprintf(stderr, ERR_MEM_ALLOC);
+        fprintf(stderr, ERR_INSTRUMENT_INIT);
+        return FAILURE;
+    }
+
+    instrument->envelope->attack_duration = attack_duration;
+    instrument->envelope->attack_amplitude = attack_amplitude;
+    instrument->envelope->decay_duration = decay_duration;
+    instrument->envelope->release_duration = release_duration;
 
     return SUCCESS;
 }

@@ -7,11 +7,11 @@
 
 typedef enum Oscillator
 {
-    Sine,
-    Square,
-    Triangle,
-    Sawtooth,
-    Noise
+    Sine = 0,
+    Square = 1,
+    Triangle = 2,
+    Sawtooth = 3,
+    Noise = 4
 } Oscillator;
 
 double oscillator_play(Oscillator osc, double t, double f, double phase);

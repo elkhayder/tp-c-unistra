@@ -12,9 +12,12 @@
 
 #include "io/Midi.h"
 #include "io/Export.h"
+#include "io/Ins.h"
 
 int main(int argc, char **argv)
 {
+    Instrument *instruments = ins_parse("Mario.ins");
+
     char midiFilename[1024];
     char wavFilename[1024];
 

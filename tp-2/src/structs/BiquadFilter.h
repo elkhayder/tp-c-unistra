@@ -12,12 +12,12 @@
 
 typedef enum BiquadFilterType
 {
-    LowPass,
-    HighPass,
-    BandPass,
-    Notch,
-    LowShelf,
-    HighShelf,
+    LowPass = 0,
+    HighPass = 1,
+    BandPass = 2,
+    Notch = 3,
+    LowShelf = 4,
+    HighShelf = 5,
     /* AllPass,
     PeakingEQ */
 } BiquadFilterType;

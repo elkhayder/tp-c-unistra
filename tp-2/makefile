@@ -1,5 +1,5 @@
-octave: main.o ADSREnvelope.o BiquadFilter.o Instrument.o Note.o Oscillator.o Signal.o Track.o Midi.o Export.o
-	gcc build/main.o build/ADSREnvelope.o build/BiquadFilter.o build/Instrument.o build/Note.o build/Oscillator.o build/Signal.o build/Track.o build/Midi.o build/Export.o -o octave -lm
+octave: main.o ADSREnvelope.o BiquadFilter.o Instrument.o Note.o Oscillator.o Signal.o Track.o Export.o Ins.o Midi.o
+	gcc build/main.o build/ADSREnvelope.o build/BiquadFilter.o build/Instrument.o build/Note.o build/Oscillator.o build/Signal.o build/Track.o build/Export.o build/Ins.o build/Midi.o -o octave -lm
 
 main.o: src/main.c
 	gcc -ansi -Wall -c src/main.c -o build/main.o
@@ -29,11 +29,14 @@ Track.o: src/structs/Track.c src/structs/Track.h
 
 # IO
 
-Midi.o: src/io/Midi.c src/io/Midi.h
-	gcc -ansi -Wall -c src/io/Midi.c -o build/Midi.o
-
 Export.o: src/io/Export.c src/io/Export.h
 	gcc -ansi -Wall -c src/io/Export.c -o build/Export.o
+
+Ins.o: src/io/Ins.c src/io/Ins.h
+	gcc -ansi -Wall -c src/io/Ins.c -o build/Ins.o
+
+Midi.o: src/io/Midi.c src/io/Midi.h
+	gcc -ansi -Wall -c src/io/Midi.c -o build/Midi.o
 
 # Routines
 
