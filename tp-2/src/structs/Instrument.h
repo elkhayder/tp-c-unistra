@@ -16,8 +16,6 @@ typedef struct Instrument
     double *oscs_coefs;
     size_t oscs_count;
     ADSREnvelope *envelope;
-    BiquadFilter *filter;
-
 } Instrument;
 
 int instrument_init(Instrument *instrument);

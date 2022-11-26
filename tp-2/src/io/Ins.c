@@ -1,6 +1,6 @@
 #include "Ins.h"
 
-Instrument *ins_parse(const char *filename)
+Channel *ins_parse(const char *filename)
 {
     /* I assume that the Ins file is respecting the format */
 
@@ -15,13 +15,20 @@ Instrument *ins_parse(const char *filename)
         return FAILURE;
     }
 
-    Instrument *instruments = calloc(16, sizeof(Instrument));
-    __uint8_t currentInstrumentIndex = 0;
-    int currentStep = 0;
+    Channel *channels = malloc(16 * sizeof(Channel));
 
-    /* Init First Instrument */
-    /* &instruments[0] == instruments */
-    instrument_init(instruments);
+    int i;
+    for (i = 0; i < 16; i++)
+    {
+        channels[i].id = i;
+        Instrument *ins = malloc(sizeof(Instrument));
+        instrument_init(ins);
+        channels[i].instrument = ins;
+        channels[i].filter = NULL;
+    }
+
+    __uint8_t currentChannelIndex = 0;
+    int currentStep = 0;
 
     while (fgets(buffer, BUFFER_SIZE, file) != NULL)
     {
@@ -32,13 +39,12 @@ Instrument *ins_parse(const char *filename)
         /* Empty line */
         if (buffer[0] == '\n')
         {
-            currentInstrumentIndex++;
+            currentChannelIndex++;
             currentStep = 0;
             /* Exit file reading on max Instuments */
-            if (currentInstrumentIndex == 16)
+            if (currentChannelIndex == 16)
                 break;
 
-            instrument_init(&instruments[currentInstrumentIndex]);
             continue;
         }
 
@@ -53,7 +59,7 @@ Instrument *ins_parse(const char *filename)
             sscanf(strtok(NULL, " "), "%lf", &DecayDuration);
             sscanf(strtok(NULL, " "), "%lf", &ReleaseDuration);
             instrument_set_envelope(
-                &instruments[currentInstrumentIndex],
+                channels[currentChannelIndex].instrument,
                 AttackDuration,
                 AttackAmplitude,
                 DecayDuration,
@@ -62,6 +68,12 @@ Instrument *ins_parse(const char *filename)
         /* Filter */
         else if (currentStep == 1)
         {
+            if (buffer[0] == '-')
+            {
+                currentStep++;
+                continue;
+            }
+
             BiquadFilter *filter = malloc(sizeof(BiquadFilter));
 
             int type;
@@ -74,7 +86,7 @@ Instrument *ins_parse(const char *filename)
 
             filter_init(filter, (BiquadFilterType)type, f0, Q, gainDB);
 
-            instruments[currentInstrumentIndex].filter = filter;
+            channels[currentChannelIndex].filter = filter;
         }
         /* Oscillators */
         else
@@ -85,11 +97,11 @@ Instrument *ins_parse(const char *filename)
             sscanf(strtok(buffer, " "), "%d", &oscilaltor);
             sscanf(strtok(NULL, " "), "%lf", &coef);
 
-            instrument_append_osc(&instruments[currentInstrumentIndex], (Oscillator)oscilaltor, coef);
+            instrument_append_osc(channels[currentChannelIndex].instrument, (Oscillator)oscilaltor, coef);
         }
 
         currentStep++;
     }
 
-    return instruments;
+    return channels;
 }

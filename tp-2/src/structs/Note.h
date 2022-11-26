@@ -17,6 +17,7 @@ typedef struct Note
     __uint32_t on_tick;
     __uint32_t off_tick;
     __uint8_t velocity;
+    __uint8_t channel;
     bool isOff;
 } Note;
 

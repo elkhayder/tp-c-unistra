@@ -19,13 +19,14 @@ void track_free(Track *track)
     free(track->notes);
 }
 
-int track_note_on(Track *track, __uint8_t id, __uint32_t tick, __uint8_t velocity)
+int track_note_on(Track *track, __uint8_t id, __uint32_t tick, __uint8_t velocity, __uint8_t channel)
 {
     Note note;
     note.id = id;
     note.on_tick = tick;
     note.isOff = false;
     note.velocity = velocity;
+    note.channel = channel;
 
     track->notes_count++;
     track->notes = realloc(track->notes, track->notes_count * sizeof(Note));
@@ -41,12 +42,12 @@ int track_note_on(Track *track, __uint8_t id, __uint32_t tick, __uint8_t velocit
     return SUCCESS;
 }
 
-int track_note_off(Track *track, __uint8_t id, __uint32_t tick)
+int track_note_off(Track *track, __uint8_t id, __uint32_t tick, __uint8_t channel)
 {
     int i;
     for (i = 0; i < track->notes_count; i++)
     {
-        if (track->notes[i].id == id && !track->notes[i].isOff)
+        if (track->notes[i].id == id && track->notes[i].channel == channel && !track->notes[i].isOff)
         {
             track->notes[i].off_tick = tick;
             track->notes[i].isOff = true;
@@ -79,26 +80,16 @@ double tickToSecond(__uint32_t tick, Track *track)
     return 60.0 * ((double)tick) / (double)(track->divisions * track->BPM);
 }
 
-int track_play(Track *track, Signal *output, Instrument *instrument)
+int track_play(Track *track, Signal *output, Channel *channels)
 {
     int i;
     Signal buffer;
-    for (i = 0; i < track->notes_count; i++)
+
+    for (i = 0; i < 16; i++)
     {
-        Note *note = &track->notes[i];
-
-        if (note_play(note, track, instrument, &buffer) == FAILURE)
-        {
-            fprintf(stderr, ERR_TRACK_PLAY);
-            return FAILURE;
-        };
-
-        if (signal_concatinate(output, &buffer, tickToSecond(note->on_tick, track)) == FAILURE)
-        {
-            fprintf(stderr, ERR_TRACK_PLAY);
-            return FAILURE;
-        };
-
+        signal_init(&buffer, SAMPLING_RATE, 0);
+        channel_play(&channels[i], track, &buffer);
+        signal_concatinate(output, &buffer, 0);
         signal_free(&buffer);
     }
 

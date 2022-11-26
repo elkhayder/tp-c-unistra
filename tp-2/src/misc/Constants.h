@@ -14,7 +14,7 @@
 
 /* Errors */
 
-#define ERR_PROG_SYNTAX "%s Midi_Filename [Output_Filename]\n"
+#define ERR_PROG_SYNTAX "Syntax: %s Midi_Filename Ins_Filename Output_Filename\n"
 
 #define ERR_FILE_CREATE "Error creating file: %s\n"
 #define ERR_FILE_READ "Error reading file: %s\n"

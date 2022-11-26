@@ -6,7 +6,6 @@ int instrument_init(Instrument *instrument)
     instrument->oscs_coefs = 0;
     instrument->oscs = malloc(0);
     instrument->envelope = NULL;
-    instrument->filter = NULL;
     return SUCCESS;
 }
 
@@ -71,6 +70,7 @@ double instrument_play(Instrument *instrument, double t, double f, double durati
     double v = 0;
     double oscsCoefsSum = 0;
     int i;
+
     for (i = 0; i < instrument->oscs_count; i++)
     {
         v += oscillator_play(instrument->oscs[i], t, f, phase) * instrument->oscs_coefs[i];

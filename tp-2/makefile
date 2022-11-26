@@ -1,5 +1,5 @@
-octave: main.o ADSREnvelope.o BiquadFilter.o Instrument.o Note.o Oscillator.o Signal.o Track.o Export.o Ins.o Midi.o
-	gcc build/main.o build/ADSREnvelope.o build/BiquadFilter.o build/Instrument.o build/Note.o build/Oscillator.o build/Signal.o build/Track.o build/Export.o build/Ins.o build/Midi.o -o octave -lm
+octave: main.o ADSREnvelope.o BiquadFilter.o Channel.o Instrument.o Note.o Oscillator.o Signal.o Track.o Export.o Ins.o Midi.o
+	gcc build/main.o build/ADSREnvelope.o build/BiquadFilter.o build/Channel.o build/Instrument.o build/Note.o build/Oscillator.o build/Signal.o build/Track.o build/Export.o build/Ins.o build/Midi.o -o octave -lm
 
 main.o: src/main.c
 	gcc -ansi -Wall -c src/main.c -o build/main.o
@@ -11,6 +11,9 @@ ADSREnvelope.o: src/structs/ADSREnvelope.c src/structs/ADSREnvelope.h
 
 BiquadFilter.o: src/structs/BiquadFilter.c src/structs/BiquadFilter.h
 	gcc -ansi -Wall -c src/structs/BiquadFilter.c -o build/BiquadFilter.o
+
+Channel.o: src/structs/Channel.c src/structs/Channel.h
+	gcc -ansi -Wall -c src/structs/Channel.c -o build/Channel.o
 
 Instrument.o: src/structs/Instrument.c src/structs/Instrument.h
 	gcc -ansi -Wall -c src/structs/Instrument.c -o build/Instrument.o

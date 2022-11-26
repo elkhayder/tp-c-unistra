@@ -1,5 +1,12 @@
-#include <stdlib.h>
+/**
+ * Author: @elkhayder
+ *
+ * Please read the README.
+ *
+ * MIT License
+ */
 
+#include <stdlib.h>
 #include <math.h>
 #include <string.h>
 
@@ -16,29 +23,21 @@
 
 int main(int argc, char **argv)
 {
-    Instrument *instruments = ins_parse("Mario.ins");
-
     char midiFilename[1024];
+    char insFilename[1024];
     char wavFilename[1024];
 
-    if (argc == 1)
+    if (argc != 4)
     {
         fprintf(stderr, ERR_PROG_SYNTAX, argv[0]);
         return EXIT_FAILURE;
     }
 
     strcpy(midiFilename, argv[1]);
-    strcat(midiFilename, ".mid");
+    strcpy(insFilename, argv[2]);
+    strcpy(wavFilename, argv[3]);
 
-    if (argc == 3)
-    {
-        strcpy(wavFilename, argv[2]);
-    }
-    else
-    {
-        strcpy(wavFilename, argv[1]);
-    }
-    strcat(wavFilename, ".wav");
+    Channel *channels = ins_parse(insFilename);
 
     Signal output;
     signal_init(&output, SAMPLING_RATE, 0);
@@ -47,18 +46,7 @@ int main(int argc, char **argv)
     track_init(&track);
     midi_parse(midiFilename, &track);
 
-    Instrument ins;
-    instrument_init(&ins);
-    instrument_append_osc(&ins, Sine, 0.7);
-    instrument_append_osc(&ins, Square, 0.2);
-    instrument_append_osc(&ins, Sawtooth, 0.4);
-    instrument_set_envelope(&ins, 0.05, 1.1, 0.02, 0.1);
-
-    track_play(&track, &output, &ins);
-
-    BiquadFilter filter;
-    filter_init(&filter, LowPass, 1000, FRAC_1_SQRT_2, 0);
-    filter_apply(&filter, &output);
+    track_play(&track, &output, channels);
 
     export_wav(&output, wavFilename);
 

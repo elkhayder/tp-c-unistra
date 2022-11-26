@@ -5,9 +5,10 @@
 #include <string.h>
 #include <stdio.h>
 
+#include "../structs/Channel.h"
 #include "../structs/Instrument.h"
 #include "../misc/Constants.h"
 
-Instrument *ins_parse(const char *filename);
+Channel *ins_parse(const char *filename);
 
 #endif

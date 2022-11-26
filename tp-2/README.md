@@ -11,17 +11,18 @@
 - [x] Multiple Oscillators
 - [x] ADSR Envelope
 - [x] Biquad filters
-- [ ] Parse from .ins files
+- [x] Parse from .ins files
 
 ###### MIDI:
 - [x] Parsing
-- [ ] Multiple channels
+- [x] Multiple channels
 - [ ] Multiple Tracks
 
 ###### Export:
 - [x] Wav
 - [x] CSV
-- 
+
+###### .ins File structure
 ```makefile
 # Any line that starts with a hash symbol (#) is considered a comment
 # First line consists of Envelope params

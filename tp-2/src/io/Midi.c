@@ -93,6 +93,12 @@ int midi_parse(const char *filename, Track *track)
     FILE *file = fopen(filename, "rb");
     FILE *log = fopen("midi.log", "w");
 
+    if (file == NULL)
+    {
+        fprintf(stderr, ERR_FILE_READ, filename);
+        return FAILURE;
+    }
+
     char *fileID = readString(file, 4);
     __uint32_t headerLength = read32(file);
     __uint16_t format = read16(file);
@@ -139,7 +145,7 @@ int midi_parse(const char *filename, Track *track)
                 __uint8_t nNoteID = fgetc(file);
                 __uint8_t nNoteVelocity = fgetc(file);
                 fprintf(log, "Note OFF - ID: %u, Velocity: %u, Δt: %u\n", nNoteID, nNoteVelocity, deltaTime);
-                track_note_off(track, nNoteID, wallTime);
+                track_note_off(track, nNoteID, wallTime, nChannel);
             }
             else if ((status & 0xF0) == VoiceNoteOn)
             {
@@ -150,12 +156,12 @@ int midi_parse(const char *filename, Track *track)
                 if (nNoteVelocity == 0)
                 {
                     fprintf(log, "Note OFF - ID: %u, Velocity: %u, Δt: %u\n", nNoteID, nNoteVelocity, deltaTime);
-                    track_note_off(track, nNoteID, wallTime);
+                    track_note_off(track, nNoteID, wallTime, nChannel);
                 }
                 else
                 {
                     fprintf(log, "Note ON - ID: %u, Velocity: %u, Δt: %u\n", nNoteID, nNoteVelocity, deltaTime);
-                    track_note_on(track, nNoteID, wallTime, nNoteVelocity);
+                    track_note_on(track, nNoteID, wallTime, nNoteVelocity, nChannel);
                 }
             }
             else if ((status & 0xF0) == VoiceAftertouch)

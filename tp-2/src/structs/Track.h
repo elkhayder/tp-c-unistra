@@ -4,8 +4,10 @@
 #include "Instrument.h"
 #include "Signal.h"
 #include "Note.h"
+#include "Channel.h"
 
 typedef struct Note Note;
+typedef struct Channel Channel;
 
 typedef struct Track
 {
@@ -17,10 +19,10 @@ typedef struct Track
 
 int track_init(Track *track);
 void track_free(Track *track);
-int track_note_on(Track *track, __uint8_t id, __uint32_t tick, __uint8_t velocity);
-int track_note_off(Track *track, __uint8_t id, __uint32_t tick);
+int track_note_on(Track *track, __uint8_t id, __uint32_t tick, __uint8_t velocity, __uint8_t channel);
+int track_note_off(Track *track, __uint8_t id, __uint32_t tick, __uint8_t channel);
 void track_log(Track *track);
 double tickToSecond(__uint32_t tick, Track *track);
-int track_play(Track *track, Signal *output, Instrument *instrument);
+int track_play(Track *track, Signal *output, Channel *channels);
 
 #endif
