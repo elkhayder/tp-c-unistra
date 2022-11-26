@@ -19,13 +19,13 @@ int channel_play(Channel *channel, Track *track, Signal *output)
 
         if (note_play(note, track, channel->instrument, &buffer) == FAILURE)
         {
-            fprintf(stderr, ERR_TRACK_PLAY);
+            fprintf(stderr, ERR_CHANNEL_PLAY, channel->id);
             return FAILURE;
         };
 
         if (signal_concatinate(output, &buffer, tickToSecond(note->on_tick, track)) == FAILURE)
         {
-            fprintf(stderr, ERR_TRACK_PLAY);
+            fprintf(stderr, ERR_CHANNEL_PLAY, channel->id);
             return FAILURE;
         };
 
@@ -34,7 +34,7 @@ int channel_play(Channel *channel, Track *track, Signal *output)
 
     if (channel->filter != NULL)
     {
-        filter_apply(channel->filter, output);
+        return filter_apply(channel->filter, output);
     }
 
     return SUCCESS;

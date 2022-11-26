@@ -73,6 +73,8 @@ void track_log(Track *track)
     FILE *log = fopen("track.log", "w");
 
     fprintf(log, "Total Notes: %lu\n", track->notes_count);
+    fprintf(log, "BPM: %u\n", track->BPM);
+    fprintf(log, "Divisions: %u\n", track->divisions);
 
     int i;
     for (i = 0; i < track->notes_count; i++)
@@ -98,16 +100,45 @@ double tickToSecond(__uint32_t tick, Track *track)
  */
 int track_play(Track *track, Signal *output, Channel *channels)
 {
-    int i;
+    size_t i;
     Signal buffer;
 
     for (i = 0; i < 16; i++)
     {
         signal_init(&buffer, SAMPLING_RATE, 0);
-        channel_play(&channels[i], track, &buffer);
-        signal_concatinate(output, &buffer, 0);
+
+        if (channel_play(&channels[i], track, &buffer) == FAILURE)
+        {
+            fprintf(stderr, ERR_TRACK_PLAY);
+            return FAILURE;
+        }
+
+        if (signal_concatinate(output, &buffer, 0) == FAILURE)
+        {
+            fprintf(stderr, ERR_TRACK_PLAY);
+            return FAILURE;
+        }
+
         signal_free(&buffer);
     }
+
+    /**
+     * This block of code was previously responsible of removing the blank on the start, it compiles and all, but im not sure what went wrong. I'm too young to deal with this
+     */
+    /* size_t startOfSongIndex = 0;
+    for (i = 0; i < output->samples_count; i++)
+    {
+        if (output->data[i] != 0.0)
+        {
+            startOfSongIndex = i;
+            break;
+        }
+    }
+    output->samples_count -= startOfSongIndex;
+    double *temp = malloc(output->samples_count * sizeof(double));
+    memcpy(temp, output->data + startOfSongIndex, output->samples_count);
+    free(output->data);
+    output->data = temp; */
 
     return SUCCESS;
 }

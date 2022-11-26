@@ -325,14 +325,27 @@ int midi_parse(const char *filename, Track *track)
     /**
      * Substract the initial Delta time where the headers were transmitted
      * First note in Track notes list should be the origin of t axis
+     *
+     * Update:
+     * Previously I naivly assumed that teh first note is the start of t origin, it introduced a very annoying bug,
+     * now I loop through all the notes to find the smallest on_tick ans take it as my origin
+     *
+     * Update:
+     * I now just ignore this, I fix the leading blank later when exporting the data
      */
-    int i;
-    __uint32_t offset = track->notes[0].on_tick;
+
+    /*int i;
+     __uint32_t offset = (__uint32_t)HUGE_VAL;
+    for (i = 0; i < track->notes_count; i++)
+    {
+        offset = MIN(offset, track->notes[i].on_tick);
+    }
+
     for (i = 0; i < track->notes_count; i++)
     {
         track->notes[i].on_tick -= offset;
         track->notes[i].off_tick -= offset;
-    }
+    }*/
 
     return SUCCESS;
 }

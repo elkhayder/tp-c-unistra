@@ -36,4 +36,6 @@
 
 #define ERR_APPLYING_FILTER "Error applying filter\n"
 
+#define ERR_CHANNEL_PLAY "Error playing %dth channel\n"
+
 #endif

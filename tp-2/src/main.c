@@ -44,16 +44,16 @@ int main(int argc, char **argv)
 
     Track track;
     track_init(&track);
+
     midi_parse(midiFilename, &track);
+    track_log(&track);
 
     track_play(&track, &output, channels);
 
     export_wav(&output, wavFilename);
 
-    track_log(&track);
-    track_free(&track);
-
     signal_free(&output);
+    track_free(&track);
 
     return EXIT_SUCCESS;
 }
