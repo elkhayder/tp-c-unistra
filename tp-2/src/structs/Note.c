@@ -1,5 +1,9 @@
 #include "Note.h"
 
+/**
+ * Get frequency of MIDI note id
+ * http://www.music.mcgill.ca/~ich/classes/mumt306/StandardMIDIfileformat.html#BMA1_3
+ */
 double note_to_frequency(__uint8_t note)
 {
     /**
@@ -10,6 +14,9 @@ double note_to_frequency(__uint8_t note)
     return 16.35 * pow(2, (double)note / 12.0 - 1);
 }
 
+/**
+ * Play note
+ */
 int note_play(Note *note, Track *track, Instrument *instrument, Signal *signal)
 {
     double duration = tickToSecond(note->off_tick - note->on_tick, track);

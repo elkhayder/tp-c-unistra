@@ -5,8 +5,15 @@
  *
  * - Cookbook formulae for audio EQ biquad filter coefficients
  *      https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html
+ *
+ * - Simulator: A biquad calculator | EarLevel Engineering
+ *      https://www.earlevel.com/main/2010/12/20/biquad-calculator/
  */
 
+/**
+ * Common IIR filter coefficients
+ * gainDB is only needed for LowShelf & HighShelf filters
+ */
 int filter_init(BiquadFilter *filter, BiquadFilterType type, double f0, double Q, double gainDB)
 {
     const double A = pow(10, gainDB / 40);
@@ -90,7 +97,7 @@ int filter_apply(BiquadFilter *filter, Signal *signal)
 {
     double *y = signal->data;
     /**
-     * I could  allocate memory for only the 2 previous values, but I guess it is simpler to be like this
+     * I could allocate memory for only the 2 previous values, but I guess it is simpler to be like this
      */
     double *x = malloc(signal->samples_count * sizeof(double));
     if (x == NULL)

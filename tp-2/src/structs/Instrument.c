@@ -1,5 +1,8 @@
 #include "Instrument.h"
 
+/**
+ * Init Instrument
+ */
 int instrument_init(Instrument *instrument)
 {
     instrument->oscs_count = 0;
@@ -9,6 +12,9 @@ int instrument_init(Instrument *instrument)
     return SUCCESS;
 }
 
+/**
+ * Append oscillator
+ */
 int instrument_append_osc(Instrument *instrument, Oscillator osc, double coef)
 {
     instrument->oscs_count++;
@@ -42,19 +48,17 @@ int instrument_set_envelope(
     double decay_duration,
     double release_duration)
 {
-    /* Free previous Envelope if already set */
-    if (instrument->envelope != NULL)
-    {
-        free(instrument->envelope);
-    }
-
-    instrument->envelope = malloc(sizeof(ADSREnvelope));
-
+    /* Allocate memory for envelope if not already set */
     if (instrument->envelope == NULL)
     {
-        fprintf(stderr, ERR_MEM_ALLOC);
-        fprintf(stderr, ERR_INSTRUMENT_INIT);
-        return FAILURE;
+        instrument->envelope = malloc(sizeof(ADSREnvelope));
+
+        if (instrument->envelope == NULL)
+        {
+            fprintf(stderr, ERR_MEM_ALLOC);
+            fprintf(stderr, ERR_INSTRUMENT_INIT);
+            return FAILURE;
+        }
     }
 
     instrument->envelope->attack_duration = attack_duration;
@@ -77,5 +81,10 @@ double instrument_play(Instrument *instrument, double t, double f, double durati
         oscsCoefsSum += instrument->oscs_coefs[i];
     }
 
-    return v * envelope_play(instrument->envelope, t, duration) / oscsCoefsSum;
+    if (instrument->envelope != NULL)
+    {
+        v *= envelope_play(instrument->envelope, t, duration);
+    }
+
+    return v / oscsCoefsSum;
 }

@@ -19,6 +19,9 @@ void track_free(Track *track)
     free(track->notes);
 }
 
+/**
+ * Append a new Note
+ */
 int track_note_on(Track *track, __uint8_t id, __uint32_t tick, __uint8_t velocity, __uint8_t channel)
 {
     Note note;
@@ -42,6 +45,9 @@ int track_note_on(Track *track, __uint8_t id, __uint32_t tick, __uint8_t velocit
     return SUCCESS;
 }
 
+/**
+ * Turn off previously started note
+ */
 int track_note_off(Track *track, __uint8_t id, __uint32_t tick, __uint8_t channel)
 {
     int i;
@@ -59,6 +65,9 @@ int track_note_off(Track *track, __uint8_t id, __uint32_t tick, __uint8_t channe
     return FAILURE;
 }
 
+/**
+ * Export track to log
+ */
 void track_log(Track *track)
 {
     FILE *log = fopen("track.log", "w");
@@ -69,17 +78,24 @@ void track_log(Track *track)
     for (i = 0; i < track->notes_count; i++)
     {
         Note *note = &track->notes[i];
-        fprintf(log, "Id: %u, On: %u, Off: %u, Velocity: %u\n", note->id, note->on_tick, note->off_tick, note->velocity);
+        fprintf(log, "Id: %u, Channel: %d, On: %u, Off: %u, Velocity: %u\n", note->id, note->channel, note->on_tick, note->off_tick, note->velocity);
     }
 
     fclose(log);
 }
 
+/**
+ * Convert MIDI tick to realtime seconds with respect to track properties
+ */
 double tickToSecond(__uint32_t tick, Track *track)
 {
     return 60.0 * ((double)tick) / (double)(track->divisions * track->BPM);
 }
 
+/**
+ * Play track.
+ * Basically loops through all channels and play them individually, then stacks all the signals on top of each other
+ */
 int track_play(Track *track, Signal *output, Channel *channels)
 {
     int i;

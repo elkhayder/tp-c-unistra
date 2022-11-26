@@ -61,6 +61,8 @@
         "biquadfilter.h": "c",
         "constants.h": "c",
         "ins.h": "c",
-        "adsrenvelope.h": "c"
+        "adsrenvelope.h": "c",
+        "channel.h": "c",
+        "note.h": "c"
     }
 }

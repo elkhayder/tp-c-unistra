@@ -1,5 +1,8 @@
 #include "Channel.h"
 
+/**
+ * Play track notes that belongs to the specified channel
+ */
 int channel_play(Channel *channel, Track *track, Signal *output)
 {
     int i;

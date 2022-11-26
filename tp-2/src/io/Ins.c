@@ -1,10 +1,15 @@
 #include "Ins.h"
 
+#define BUFFER_SIZE 100
+
+/**
+ * Parse .ins file.
+ * .ins format is specified in the README file.
+ * I blindly assume that the .ins file is respecting the format,
+ * that would make it far easier to  parse the file
+ */
 Channel *ins_parse(const char *filename)
 {
-    /* I assume that the Ins file is respecting the format */
-
-#define BUFFER_SIZE 100
     char buffer[BUFFER_SIZE];
 
     FILE *file = fopen(filename, "r");
@@ -14,9 +19,14 @@ Channel *ins_parse(const char *filename)
         fprintf(stderr, ERR_FILE_READ, filename);
         return FAILURE;
     }
-
+    /**
+     * 16 channels as per the MIDI specification
+     */
     Channel *channels = malloc(16 * sizeof(Channel));
 
+    /**
+     * Init Channels
+     */
     int i;
     for (i = 0; i < 16; i++)
     {
@@ -29,7 +39,6 @@ Channel *ins_parse(const char *filename)
 
     __uint8_t currentChannelIndex = 0;
     int currentStep = 0;
-
     while (fgets(buffer, BUFFER_SIZE, file) != NULL)
     {
         /* Comment line */
@@ -52,8 +61,6 @@ Channel *ins_parse(const char *filename)
         if (currentStep == 0)
         {
             double AttackDuration, AttackAmplitude, DecayDuration, ReleaseDuration;
-            /*             printf("%s\n", strtok(buffer, " "));
-             */
             sscanf(strtok(buffer, " "), "%lf", &AttackDuration);
             sscanf(strtok(NULL, " "), "%lf", &AttackAmplitude);
             sscanf(strtok(NULL, " "), "%lf", &DecayDuration);
@@ -91,13 +98,13 @@ Channel *ins_parse(const char *filename)
         /* Oscillators */
         else
         {
-            int oscilaltor;
+            int oscillator;
             double coef;
 
-            sscanf(strtok(buffer, " "), "%d", &oscilaltor);
+            sscanf(strtok(buffer, " "), "%d", &oscillator);
             sscanf(strtok(NULL, " "), "%lf", &coef);
 
-            instrument_append_osc(channels[currentChannelIndex].instrument, (Oscillator)oscilaltor, coef);
+            instrument_append_osc(channels[currentChannelIndex].instrument, (Oscillator)oscillator, coef);
         }
 
         currentStep++;

@@ -1,13 +1,16 @@
 #include "Oscillator.h"
 
+/*
+ * Oscillator at t
+ * Phase is in rad
+ * Desmos: https://www.desmos.com/calculator/2xswrci3s0
+ */
 double oscillator_play(Oscillator osc, double t, double f, double phase)
 {
     double T = 1 / f;
     t += phase / (2 * M_PI * f); /* Add phase */
     double mod = fmod(t, T);
-    /*
-     * Desmos: https://www.desmos.com/calculator/2xswrci3s0
-     */
+
     switch (osc)
     {
     case Sine:

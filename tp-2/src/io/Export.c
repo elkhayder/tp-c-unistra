@@ -5,6 +5,9 @@
 #include <string.h>
 #include <math.h>
 
+/**
+ * Export CSV file
+ */
 int export_csv(Signal *signal, const char *filename)
 {
     FILE *file = fopen(filename, "w");
@@ -29,6 +32,14 @@ int export_csv(Signal *signal, const char *filename)
     return SUCCESS;
 }
 
+/**
+ * Export WAV file
+ *
+ * Resources:
+ *
+ * - Microsoft WAVE soundfile format
+ *     http://soundfile.sapp.org/doc/WaveFormat/
+ */
 int export_wav(Signal *signal, const char *filename)
 {
     FILE *file = fopen(filename, "w");
@@ -55,7 +66,7 @@ int export_wav(Signal *signal, const char *filename)
     /* AudioFormat */
     buffer[0] = 1;
     fwrite(buffer, 2, 1, file);
-    /* NumChannels       */
+    /* NumChannels */
     fwrite(buffer, 2, 1, file);
     /* Sample rate */
     buffer[0] = signal->sampling_rate;
@@ -77,7 +88,7 @@ int export_wav(Signal *signal, const char *filename)
 
     int i;
     double maxValue = 0;
-
+    /* Get Max value for later normalization */
     for (i = 0; i < signal->samples_count; i++)
     {
         maxValue = MAX(abs(signal->data[i]), maxValue);

@@ -18,6 +18,9 @@
 
 */
 
+/**
+ * Read 2 bytes big endian uint
+ */
 __uint16_t read16(FILE *file)
 {
     __uint16_t n;
@@ -25,10 +28,16 @@ __uint16_t read16(FILE *file)
     return ((n >> 8) | (n << 8));
 }
 
+/**
+ * Read 4 bytes big endian uint
+ */
 __uint32_t read32(FILE *file)
 {
     __uint32_t n;
     fread(&n, sizeof(n), 1, file);
+    /**
+     * Good old bit shifts & masks
+     */
     return (((n >> 24) & 0xff) | ((n << 8) & 0xff0000) | ((n >> 8) & 0xff00) | ((n << 24) & 0xff000000));
 }
 
@@ -61,6 +70,9 @@ __uint32_t readValue(FILE *file)
     return nValue;
 }
 
+/**
+ * Read MIDI string
+ */
 char *readString(FILE *file, unsigned int length)
 {
     /**
@@ -80,7 +92,7 @@ char *readString(FILE *file, unsigned int length)
 }
 
 /**
- * Ignore the annoying warning
+ * Ignore the annoying warnings
  * https://stackoverflow.com/a/3394268/11755388
  */
 #pragma GCC diagnostic push
@@ -311,7 +323,7 @@ int midi_parse(const char *filename, Track *track)
     fclose(log);
 
     /**
-     * Substract the initiall Delta times where the header files were transmitted
+     * Substract the initial Delta time where the headers were transmitted
      * First note in Track notes list should be the origin of t axis
      */
     int i;

@@ -2,6 +2,10 @@
 
 #include <math.h>
 
+/**
+ * Return envelope gain at time t
+ * Needs the note duration parameter to calculate the sustain duration
+ */
 double envelope_play(ADSREnvelope *env, double t, double duration)
 {
     /**
@@ -23,6 +27,7 @@ double envelope_play(ADSREnvelope *env, double t, double duration)
      */
     else if (t < duration)
     {
+        /* Should this be Exp decay ?*/
         return 1;
     }
     /**
