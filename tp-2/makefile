@@ -43,12 +43,5 @@ Midi.o: src/io/Midi.c src/io/Midi.h
 
 # Routines
 
-clear:
-	rm build/*
-	rm octave
-
 clean:
-	rm *.wav *.log *.csv
-
-run: octave
-	./octave SingleNote
+	rm build/* octave *.wav *.log *.csv
