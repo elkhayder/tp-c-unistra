@@ -16,6 +16,8 @@ typedef struct Instrument
     double *oscs_coefs;
     size_t oscs_count;
     ADSREnvelope *envelope;
+    double vibrato_coef;
+    double vibrato_freq;
 } Instrument;
 
 int instrument_init(Instrument *instrument);
@@ -29,6 +31,6 @@ int instrument_set_envelope(
     double decay_duration,
     double release_duration);
 
-double instrument_play(Instrument *instrument, double t, double f, double duration, double phase);
+double instrument_play(Instrument *instrument, double t, double f, double duration);
 
 #endif

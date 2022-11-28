@@ -95,6 +95,12 @@ Channel *ins_parse(const char *filename)
 
             channels[currentChannelIndex].filter = filter;
         }
+        /* Vibrato */
+        else if (currentStep == 2)
+        {
+            sscanf(strtok(buffer, " "), "%lf", &channels[currentChannelIndex].instrument->vibrato_coef);
+            sscanf(strtok(NULL, " "), "%lf", &channels[currentChannelIndex].instrument->vibrato_freq);
+        }
         /* Oscillators */
         else
         {

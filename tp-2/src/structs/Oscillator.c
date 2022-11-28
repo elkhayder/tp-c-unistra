@@ -2,13 +2,13 @@
 
 /*
  * Oscillator at t
- * Phase is in rad
  * Desmos: https://www.desmos.com/calculator/2xswrci3s0
  */
-double oscillator_play(Oscillator osc, double t, double f, double phase)
+double oscillator_play(Oscillator osc, double t, double f, double vibrato_coef, double vibrato_freq)
 {
     double T = 1 / f;
-    t += phase / (2 * M_PI * f); /* Add phase */
+    /* t += phase / (2 * M_PI * f); */ /* Add phase */
+    f += vibrato_coef * sin(2 * M_PI * vibrato_freq);
     double mod = fmod(t, T);
 
     switch (osc)

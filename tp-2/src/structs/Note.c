@@ -36,8 +36,7 @@ int note_play(Note *note, Track *track, Instrument *instrument, Signal *signal)
                           instrument_play(instrument,
                                           t,
                                           note_to_frequency(note->id),
-                                          duration,
-                                          0);
+                                          duration);
     }
 
     return SUCCESS;

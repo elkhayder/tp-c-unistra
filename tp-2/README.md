@@ -31,6 +31,9 @@ AttackDuration AttackAmplitude DecayDuration ReleaseDuration
 # There are 5 different filter types
 # LowPass = 0, HighPass = 1, BandPass = 2, Notch = 3, LowShelf = 4, HighShelf = 5,
 Type CuttingFrequency Q GainInDB
+# Third one conatins Vibrato Info
+# Just set VibratoCoef = 0 to disable
+VibratoCoef VibratoFreq
 # Oscillators
 # Each line consists of Two values, Oscillator type id & Coefficient
 # Theoretically there can be unlimited amount of Oscillators, but thecnically no oscillator should be repeated, since the result of a repeated oscillator results in the same oscillator with sum of coefs

@@ -14,6 +14,6 @@ typedef enum Oscillator
     Noise = 4
 } Oscillator;
 
-double oscillator_play(Oscillator osc, double t, double f, double phase);
+double oscillator_play(Oscillator osc, double t, double f, double vibrato_coef, double vibrato_freq);
 
 #endif

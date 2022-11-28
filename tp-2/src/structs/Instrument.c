@@ -69,7 +69,7 @@ int instrument_set_envelope(
     return SUCCESS;
 }
 
-double instrument_play(Instrument *instrument, double t, double f, double duration, double phase)
+double instrument_play(Instrument *instrument, double t, double f, double duration)
 {
     double v = 0;
     double oscsCoefsSum = 0;
@@ -77,7 +77,7 @@ double instrument_play(Instrument *instrument, double t, double f, double durati
 
     for (i = 0; i < instrument->oscs_count; i++)
     {
-        v += oscillator_play(instrument->oscs[i], t, f, phase) * instrument->oscs_coefs[i];
+        v += oscillator_play(instrument->oscs[i], t, f, instrument->vibrato_coef, instrument->vibrato_freq) * instrument->oscs_coefs[i];
         oscsCoefsSum += instrument->oscs_coefs[i];
     }
 

@@ -44,7 +44,7 @@ int export_wav(Signal *signal, const char *filename)
 {
     FILE *file = fopen(filename, "w");
 
-    int buffer[1];
+    int buffer;
 
     int dataBytesCount = signal->samples_count * 2;
 
@@ -55,36 +55,36 @@ int export_wav(Signal *signal, const char *filename)
     }
 
     fprintf(file, "RIFF");
-    buffer[0] = 36 + dataBytesCount;
-    fwrite(buffer, 1, 4, file);
+    buffer = 36 + dataBytesCount;
+    fwrite(&buffer, 1, 4, file);
     fprintf(file, "WAVE");
 
     fprintf(file, "fmt ");
     /* Subchunk1Size */
-    buffer[0] = 16;
-    fwrite(buffer, 4, 1, file);
+    buffer = 16;
+    fwrite(&buffer, 4, 1, file);
     /* AudioFormat */
-    buffer[0] = 1;
-    fwrite(buffer, 2, 1, file);
+    buffer = 1;
+    fwrite(&buffer, 2, 1, file);
     /* NumChannels */
-    fwrite(buffer, 2, 1, file);
+    fwrite(&buffer, 2, 1, file);
     /* Sample rate */
-    buffer[0] = signal->sampling_rate;
-    fwrite(buffer, 4, 1, file);
+    buffer = signal->sampling_rate;
+    fwrite(&buffer, 4, 1, file);
     /* Byte rate */
-    buffer[0] = signal->sampling_rate * 2;
-    fwrite(buffer, 4, 1, file);
+    buffer = signal->sampling_rate * 2;
+    fwrite(&buffer, 4, 1, file);
     /* Block Align */
-    buffer[0] = 2;
-    fwrite(buffer, 2, 1, file);
+    buffer = 2;
+    fwrite(&buffer, 2, 1, file);
     /* BitsPerSample */
-    buffer[0] = 16;
-    fwrite(buffer, 2, 1, file);
+    buffer = 16;
+    fwrite(&buffer, 2, 1, file);
 
     fprintf(file, "data");
     /* Subchunk2Size */
-    buffer[0] = dataBytesCount;
-    fwrite(buffer, 4, 1, file);
+    buffer = dataBytesCount;
+    fwrite(&buffer, 4, 1, file);
 
     int i;
     double maxValue = 0;
@@ -96,8 +96,8 @@ int export_wav(Signal *signal, const char *filename)
 
     for (i = 0; i < signal->samples_count; i++)
     {
-        buffer[0] = (__int16_t)((signal->data[i] / maxValue) * pow(2, 15) / 2);
-        fwrite(buffer, 2, 1, file);
+        buffer = (__int16_t)((signal->data[i] / maxValue) * pow(2, 15) / 2);
+        fwrite(&buffer, 2, 1, file);
     }
 
     return SUCCESS;
